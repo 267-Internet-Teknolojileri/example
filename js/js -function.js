@@ -198,7 +198,28 @@ var personals = [{
     class: "pazarlama",
     year: 5,
     lang: "tr"
+    }];
+
+var products = [{
+    id: 0,
+    name: "pencil",
+    pay: "29"
+}, {
+    id: 1,
+    name: "book",
+    pay: "29"
+    }];
+
+var orders = [{
+    userid: 0,
+    id: 0,
+    total: 5
+}, {
+    userid: 0,
+    id: 1,
+    total: 3
 }];
+
 
 var newer = [{
     //name: value,
@@ -236,9 +257,11 @@ var persons = {
                         document.write('<tr><td>' + person + ' : </td><td>' + val + '</td></tr>');
                     }
                 }
+
                 if (len - 1 > turn) { document.write(line); }
                 turn += 1;
             }
+
             document.write("</table>");
         }
     },
@@ -288,14 +311,17 @@ var persons = {
             for (var i in this.data) {
                 if (this.username(i) == username) {
                     for (var val in values) {
-                        var o = values[val];
-                        //alert(Object.keys(o).toString());
+                        var obj = values[val];//object { level: "starter" }
+                        for (var name in obj) {//level
+                            //var name =Object.keys(obj).toString();//level
+                            var addValue = obj[name];//starter
+                            persons.create(name, addValue, username);
+                        }
                     }
                 }
             }
         }
     }
-
 }
 
 persons.data = personals;
@@ -303,7 +329,7 @@ persons.add(newer);
 persons.create("gender", "kadın");
 persons.update("cigdem", "gender", "unknown");
 persons.create("level", "beginner", "dudu");
-persons.creators("cigdem", [{ level: "starter", child: "1" }]);
+persons.creators("cigdem", [{ level: "starter" }, { child: "1" }, { card: "driver license" }]);
 
 //var output = persons.update("dudu", "age", 30); //persons.data[0]["age"] = 30;
 //if (output) { alert("güncelleme başarılı"); } else { alert("hata! güncellenemedi!"); }
