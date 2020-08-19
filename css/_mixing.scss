@@ -1,0 +1,278 @@
+// =============================================================================
+// String Replace
+// =============================================================================
+@import "variables";
+@function str-replace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+  @if $index {
+	@return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+  @return $string;
+}
+
+// =============================================================================
+// Font Face
+// =============================================================================
+
+@mixin font-face($name, $path, $weight: null, $style: null, $exts: eot woff2 woff ttf svg) {
+  $src: null;
+
+  $extmods: (
+		  eot: "?",
+		  svg: "#" + str-replace($name, " ", "_")
+  );
+
+  $formats: (otf: "opentype",ttf: "truetype");
+  @each $ext in $exts {
+	$extmod: if(map-has-key($extmods, $ext), $ext + map-get($extmods, $ext), $ext);
+	$format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
+	$src: append($src, url(quote($path + "." + $extmod)) format(quote($format)), comma);
+  }
+
+  @font-face {
+	font-family: quote($name);
+	font-style: $style;
+	font-weight: $weight;
+	src: $src;
+  }
+}
+
+@mixin custom-placeholder {
+  &::-webkit-input-placeholder {@content}
+  &:-moz-placeholder           {@content}
+  &::-moz-placeholder          {@content}
+  &:-ms-input-placeholder      {@content}
+}
+
+@mixin transition($transition:300ms all) {
+    -moz-transition:    $transition;
+    -o-transition:      $transition;
+    -webkit-transition: $transition;
+    -ms-transition:     $transition;
+    transition:         $transition;
+}
+@mixin transition-delay($delay:.2s) {
+    -webkit-transition-delay: $delay;
+    transition-delay: $delay;
+}
+@mixin linear-gradient($direction, $color-stops...) {
+  background: nth(nth($color-stops, 1), 1);
+  background: -webkit-linear-gradient(legacy-direction($direction), $color-stops);
+  background: linear-gradient($direction, $color-stops);
+}
+@mixin border-radius($val:4px) {
+    border-radius: $val;
+    -moz-border-radius: $val;
+    -webkit-border-radius: $val;
+}
+@mixin box-shadow($val...) {
+    -webkit-box-shadow: $val;
+    -moz-box-shadow: $val;
+    box-shadow: $val;
+}
+@mixin opacity($opacity:0.6) {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity*100})";
+    filter: alpha(opacity=$opacity*100);
+    -moz-opacity: $opacity;
+    -khtml-opacity: $opacity;
+    opacity: $opacity;
+}
+
+@mixin media($type:xs) {
+  @if $type == xxs {
+    @media only screen and (max-width:480px) {
+      @content;
+    }
+  }
+  @else if $type == xs {
+    @media only screen and (max-width:767px) {
+      @content;
+    }
+  }
+  @else if $type == xsup {
+    @media only screen and (min-width:768px) {
+      @content;
+    }
+  }
+  @else if $type == xsm {
+    @media only screen and (min-width:100px) and (max-width:992px) {
+      @content;
+    }
+  }
+  @else if $type == sm {
+    @media only screen and (min-width:768px) and (max-width:992px) {
+      @content;
+    }
+  }
+  @else if $type == md {
+    @media only screen and (min-width:993px) {
+      @content;
+    }
+  }
+  @else if $type == lg {
+    @media only screen and (min-width:1520px) {
+      @content;
+    }
+  }
+}
+
+
+@mixin button($bgcolor:$black,$color:$white,$border-color:$bgcolor,$set-min-width:0) {
+    display:inline-block;
+    vertical-align:middle;
+    position:relative;
+    color: $color!important;
+    @include transition();
+    @include border-radius();
+    background-color: $bgcolor;
+    border:1px solid $border-color;
+    padding:10px 20px;
+    text-align: center;
+    @if ($set-min-width > 0){@if ($set-min-width == 1){$set-min-width:100px;}min-width:$set-min-width;}
+    &:disabled, &.disabled {
+    background-color: darken($bgcolor,10%)!important;
+    cursor:not-allowed;
+  }
+  &:active, &.active {
+    background-color: lighten($bgcolor,30%);
+    cursor:default;
+    }
+  &:hover{
+    background-color: darken($bgcolor,30%);
+  }
+  &.btn-white:hover{
+    background-color: darken($bgcolor,5%);
+  }
+}
+
+@mixin marpad($val:inherit,$xy:x,$isMargin:0) {
+    $mp: "padding"; 
+    @if $isMargin!=0{$mp:"margin";}
+    @if ($xy==x){
+        #{$mp}-left:$val!important;
+        #{$mp}-right:$val!important;
+    }@else{
+        #{$mp}-top:$val!important;
+        #{$mp}-bottom:$val!important;
+     }
+}
+
+@mixin background-image($url:'../images/bg.jpg',$repeat:no-repeat,$position:0 0) {
+    background-image:url($url);
+    background-repeat:$repeat;
+    background-position:$position;
+}
+@mixin svg($url:'cloud',$background:0,$color:#36c3e6) {
+    display:block;
+    @if ($background==0){
+        background-size: contain;
+        text-indent: -9999px;
+        display: inline-block;
+    }
+    fill: $color;
+    $url:#{'../images/' + $url + '.svg'};
+    background: url($url) no-repeat center center;
+}
+
+@mixin absoluter($disableInXS:0,$posX:left,$posY:top,$zIndex:9) {
+    position:absolute;
+    #{$posX}:0;
+    #{$posY}:0;
+    z-index:$zIndex;
+    @if ($disableInXS!=0){
+        @include media{
+            position:static;
+            #{$posX}:auto;
+            #{$posY}:auto;
+            z-index:inherit;
+        }
+    }
+}
+
+@mixin rotate($rotate:180,$addDeg:1) {
+    @if ($addDeg==1){$rotate:#{$rotate}deg}
+    transform: rotate(#{$rotate});
+    -webkit-transform: rotate(#{$rotate});
+    -moz-transform: rotate(#{$rotate});
+    -o-transform: rotate(#{$rotate});
+    -ms-transform: rotate(#{$rotate});
+}
+
+@mixin linker($h:auto,$maxHeight:0,$xsup:1) {
+    /*2. parametre 1'se : ortalı resimler için (örn : referans logoları)//true
+      3. parametre 1'se : mobil üstü için linkerı çalıştır.//true
+      3. parametre 0'sa : linkerı herzaman çalıştır.//false*/
+    $xsWidth:768px; $spacing:5;
+    display:block;
+    position:relative;
+    @if ($xsup==1){ @media (min-width: $xsWidth) {height:#{$h}px;overflow:hidden;} } @else {height:#{$h}px;overflow:hidden;}
+    @if ($maxHeight==0){
+        @if ($xsup==1){ @media (min-width: $xsWidth) {img{min-height:100%;}} } @else {img{min-height:100%;}}
+    }
+    @else{
+        text-align:center;
+        @if ($maxHeight==1){$maxHeight:#{($h - ($spacing*2))};}
+        @if ($xsup==1){ @media (min-width: $xsWidth) {overflow:hidden;@include marpad(#{$spacing}px); img{max-height:#{$maxHeight}px;}} } 
+        @else {overflow:hidden;@include marpad(#{$spacing}px); img{max-height:#{$maxHeight}px;}}
+    }
+}
+
+
+@mixin background-opacity($color:#000,$opacity:0.6){
+    background: rgba($color,$opacity);
+    background: -moz-linear-gradient(left, rgba($color,$opacity) 0%, rgba($color,$opacity) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba($color,$opacity)), color-stop(100%, rgba($color,$opacity)));
+    background: -webkit-linear-gradient(left, rgba($color,$opacity) 0%, rgba($color,$opacity) 100%);
+    background: -o-linear-gradient(left, rgba($color,$opacity) 0%, rgba($color,$opacity) 100%);
+    background: -ms-linear-gradient(left, rgba($color,$opacity) 0%, rgba($color,$opacity) 100%);
+    background: linear-gradient(to right, rgba($color,$opacity) 0%, rgba($color,$opacity) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$color}', endColorstr='#{$color}', GradientType=1 );
+}
+@mixin img-dila($scale:1.20,$speed:.4){
+    display:block;
+    /*overflow:hidden;*/
+    position:relative;
+    img{
+        -webkit-transition:all #{$speed}s ease;
+        -moz-transition:all #{$speed}s ease;
+        -o-transition:all #{$speed}s ease;
+        -ms-transition:all #{$speed}s ease;
+        transition:all #{$speed}s ease;
+    }
+    &:hover img{
+        -webkit-backface-visibility:hidden;
+        backface-visibility:hidden;
+        -webkit-transform:translateZ(0) scale($scale);
+        -moz-transform:scale($scale);
+        -ms-transform:scale($scale);
+        -o-transform:translatZ(0) scale($scale);
+        transform:translatZ(0) scale($scale);
+    }
+}
+@mixin spriter($url:'../images/icons.png', $icon-width:78, $icon-height:64, $space:0, $position:y, $classes...) {
+        $x:0; $y:0;
+        @each $item in ($classes) {
+        &.icon-#{$item} { 
+            position:relative;
+            display:inline-block;
+            vertical-align:middle;
+            background-image:url($url);
+            background-repeat:no-repeat;
+            background-position:#{$x}px #{$y}px;
+            @if ($position==y){$y:$y - ($icon-height+$space);} @else {$x:$x - ($icon-width+$space);}
+            width:#{$icon-width}px;
+            height:#{$icon-height}px;
+        }
+    }
+}
+@mixin animate-speed($durationSpeed:2s) {
+    -webkit-animation-duration: $durationSpeed;
+    animation-duration: $durationSpeed;
+}
+@mixin clearfix() {
+    &::after {
+        display: block;
+        content: "";
+        clear: both;
+    }
+}

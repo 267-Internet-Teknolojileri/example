@@ -1,0 +1,44 @@
+@import "mixing"; @import "variables";
+@media (max-width: 767px) { /*mobile*/
+    .navbar-header,.logo{
+        float:none!important;
+        /*text-align:center;*/
+    }
+    .logo{
+        display:inline-block;
+        margin:0 auto!important;
+    }
+    #bs{
+        padding:0!important;
+    }
+    #bs > ul,#bs > ul > li{
+        display:block!important;
+    }
+    #bs > ul .open .dropdown-menu,#bs > ul > li:hover ul{
+        display:block!important;
+        position:relative!important;
+        float:none!important;
+        min-width:inherit!important;
+        padding:0!important;
+        box-shadow:none!important;
+    }
+    .slide ul li{
+        background-image:none!important;
+        min-height:inherit!important;
+        max-height:inherit!important;
+        height:auto!important;
+    }
+    .xs-block {
+        display: block!important;
+        width: 100%!important;
+    }
+}
+
+@media (min-width:100px) and (max-width: 992px) { /*mobile and tablet*/
+
+
+}
+
+@media (min-width:993px) and (max-width: 1200px) { /*Browser %125*/
+
+}

@@ -1,0 +1,33 @@
+// Body
+$body-bg: #fff;
+
+// Brands
+$brand-primary: #3097D1;
+$brand-info: #8eb4cb;
+$brand-success: #2ab27b;
+$brand-warning: #cbb956;
+$brand-danger: #bf5329;
+
+
+// Typography
+$font-default: 'Open Sans', sans-serif;
+$font-size-base: 12px;
+$text-color: #333;
+
+// Navbar
+$navbar-default-bg: #fff;
+
+// Buttons
+$btn-default-color: $text-color;
+
+// Inputs
+$input-border: lighten($text-color, 40%);
+$input-border-focus: lighten($brand-primary, 25%);
+$input-color-placeholder: lighten($text-color, 30%);
+
+// New Landing
+// -Colors
+$white: #ffffff;
+$black: #000000;
+// -Typo
+
