@@ -200,14 +200,26 @@ var personals = [{
     lang: "tr"
     }];
 
+var category = [{
+    name: "kırtasiye",
+    id: 1,
+    mid: 0
+}, {
+    name: "bilgisayar",
+    id: 2,
+    mid: 0//bağlı bulunduğu üst kategori id'si. 0 ise kendisi ana kategoridir.
+    }];
+
 var products = [{
     id: 10,//products id
     name: "pencil",
-    pay: "29"
+    pay: "29",
+    cid: 1
 }, {
     id: 9,
     name: "book",
-    pay: "29"
+    pay: "29",
+    cid: 1
 }];
 
 var orders = [{
@@ -224,8 +236,6 @@ var orders = [{
     id: 11,
     total: 1
 }];
-
-
 
 var newer = [{
     //name: value,
@@ -263,18 +273,27 @@ var persons = {
                 if (persons.isOrder(userid)) {
                     document.write("<tr><td>Siparişler</td><td><ul class='list-group'>");
                     var gtotal = 0;
+                    var lies = [];
                     for (var o in orders) {
                         if (userid == orders[o]["userid"]) { //personals in id find
                             for (var p in products) {
                                 if (products[p]["id"] == orders[o]["id"]) {
-                                    var total = calculator(products[p]["pay"], orders[o]["total"], "*");
-                                    document.write('<li class="list-group-item"><span class="badge">' + total + ' ₺</span>' + products[p]["name"] + ' (' + orders[o]["total"] + ') Fiyatı:' + products[p]["pay"] + ' </li>');
-                                    gtotal += total;
+                                    for (var c in category) {
+                                        if (category[c]["id"] == products[p]["cid"]) {
+
+                                            var total = calculator(products[p]["pay"], orders[o]["total"], "*");
+                                            gtotal += total;
+                                            var html = ('<li class="list-group-item"><span class="badge">' + total + ' ₺</span>' + products[p]["name"] + ' (' + orders[o]["total"] + ') Fiyatı:' + products[p]["pay"] + ' </li>');
+                                            Array.prototype.push.apply(lies, [{ name: category[c]["name"], html: html}]);
+                                        }
+                                    }
                                 }
                             }
-
                         }
                     }
+
+                    //var html = ('<li class="list-group-item list-group-item-success">' + category[c]["name"] + '</li>');
+
                     document.write('<li class="list-group-item list-group-item-success"><span class="badge">' + gtotal + ' ₺</span> Genel Toplam </li>');
                     document.write("</ul></td></tr>");
                 }
@@ -356,7 +375,7 @@ var persons = {
         }
     },
     add:  {
-        product: function (name, pay) {
+        product: function (name, pay,cid) {
             //var newId = Object.keys(products).length;
             var newId = 0, max = 0;
 
@@ -370,7 +389,8 @@ var persons = {
             var product = [{
                 id: newId,
                 name: name,
-                pay: pay
+                pay: pay,
+                cid: cid
             }];
 
             Array.prototype.push.apply(products, product);
@@ -425,7 +445,7 @@ persons.update("cigdem", "gender", "unknown");
 persons.orderUpdate(9, "pay", 65);
 persons.create("level", "beginner", "dudu");
 persons.creators("cigdem", [{ level: "starter" }, { child: "1" }, { card: "driver license" }]);
-persons.add.product("notebook", "35");
+persons.add.product("notebook", "35", 2);
 persons.add.person(newer);
 persons.buy("dudu", 9, 4);//dudu, 9 idli üründen 5 adet satın aldı. EKLE
 //persons.outbuy("dudu", 9);
