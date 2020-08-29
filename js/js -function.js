@@ -201,7 +201,7 @@ var personals = [{
     }];
 
 var products = [{
-    id: 10,
+    id: 10,//products id
     name: "pencil",
     pay: "29"
 }, {
@@ -408,13 +408,13 @@ var persons = {
         }
         return orders;
     },
-    orderUpdate: function (id, find, newProduct) {
+    orderUpdate: function (id, find, newValue) {
         for (var o in products) {
-            if (products(o)==id) {
-
+            if (products[o]["id"] == id) {
+                products[o][find] = newValue;
             }
-
         }
+        return products;
     }
 }
 persons.data = personals;
@@ -422,13 +422,13 @@ persons.data = personals;
 
 persons.create("gender", "kadın");
 persons.update("cigdem", "gender", "unknown");
-persons.orderUpdate("1", "pay", "65");
+persons.orderUpdate(9, "pay", 65);
 persons.create("level", "beginner", "dudu");
 persons.creators("cigdem", [{ level: "starter" }, { child: "1" }, { card: "driver license" }]);
 persons.add.product("notebook", "35");
 persons.add.person(newer);
 persons.buy("dudu", 9, 4);//dudu, 9 idli üründen 5 adet satın aldı. EKLE
-persons.outbuy("dudu", 9);
+//persons.outbuy("dudu", 9);
 //var output = persons.update("dudu", "age", 30); //persons.data[0]["age"] = 30;
 //if (output) { alert("güncelleme başarılı"); } else { alert("hata! güncellenemedi!"); }
 //persons.remove("cigdem");
