@@ -185,15 +185,15 @@ var replace = {
 
 //<tr><td colspan="2"><b></td></tr></b><br>
 var personals = [{
-    username: "dudu",
     name: "Dudu KARAKOYUN",
+    username: "dudu",
     age: "29",
     class: "coder",
     year: 3,
     lang: "tr,en"
 }, {
-    username: "cigdem",
     name: "Çiğdem ER",
+    username: "cigdem",
     age: "39",
     class: "pazarlama",
     year: 5,
@@ -201,30 +201,36 @@ var personals = [{
     }];
 
 var products = [{
-    id: 0,
+    id: 10,
     name: "pencil",
     pay: "29"
 }, {
-    id: 1,
+    id: 9,
     name: "book",
     pay: "29"
-    }];
+}];
 
 var orders = [{
     userid: 0,
-    id: 0,
+    id: 9,//product id
     total: 5
 }, {
     userid: 0,
-    id: 1,
+    id: 10,
     total: 3
+},
+{
+    userid: 0,
+    id: 11,
+    total: 1
 }];
+
 
 
 var newer = [{
     //name: value,
-    username: "xxx",
     name: "XXX XXXX",
+    username: "xxx",
     age: "29",
     class: "coder",
     year: 3,
@@ -236,10 +242,6 @@ var newer = [{
 var persons = {
     data: null,
     username: function (i) { return this.data[i]["username"]; },
-    add: function (newPerson) {
-        Array.prototype.push.apply(this.data, newPerson);
-        return this.data;
-    },
     doTable: function () {
         var ps = this.data;
         if (ps) {
@@ -249,7 +251,6 @@ var persons = {
                 var line = "<tr><td colspan='2'><hr /></td></tr>"
                 for (var person in ps[i]) {//4 kere döner
                     var val = ps[i][person];//ps[0]["name"];
-
                     if (person == "name") {
                         document.write('<tr><td colspan="2"><b>' + val + '</b></td></tr>');
                     }
@@ -257,13 +258,41 @@ var persons = {
                         document.write('<tr><td>' + person + ' : </td><td>' + val + '</td></tr>');
                     }
                 }
+                ///////////////////////////////////////////orders codes
+                var userid = turn;
+                if (persons.isOrder(userid)) {
+                    document.write("<tr><td>Siparişler</td><td><ul class='list-group'>");
+                    var gtotal = 0;
+                    for (var o in orders) {
+                        if (userid == orders[o]["userid"]) { //personals in id find
+                            for (var p in products) {
+                                if (products[p]["id"] == orders[o]["id"]) {
+                                    var total = calculator(products[p]["pay"], orders[o]["total"], "*");
+                                    document.write('<li class="list-group-item"><span class="badge">' + total + ' ₺</span>' + products[p]["name"] + ' (' + orders[o]["total"] + ') Fiyatı:' + products[p]["pay"] + ' </li>');
+                                    gtotal += total;
+                                }
+                            }
 
+                        }
+                    }
+                    document.write('<li class="list-group-item list-group-item-success"><span class="badge">' + gtotal + ' ₺</span> Genel Toplam </li>');
+                    document.write("</ul></td></tr>");
+                }
+                ///////////////////////////////////////////orders codes
                 if (len - 1 > turn) { document.write(line); }
                 turn += 1;
             }
-
             document.write("</table>");
         }
+    },
+    isOrder: function (userid) {//order find userid
+        var result = false;
+        for (var o in orders) {
+            if (userid==orders[o]["userid"]) {
+                result = true;
+            }
+        }
+        return result;
     },
     remove: function (username) {
         for (var i in this.data) {
@@ -274,6 +303,10 @@ var persons = {
         return this.data;
     },
     user: function (username) {
+        this.del = function () {
+            alert("ss");
+            return false;
+        }
         var user;
         for (var i in this.data) {
             if (username == this.username(i)) {
@@ -321,16 +354,81 @@ var persons = {
                 }
             }
         }
+    },
+    add:  {
+        product: function (name, pay) {
+            //var newId = Object.keys(products).length;
+            var newId = 0, max = 0;
+
+            for (var i in products) {
+                var id = products[i]["id"];
+                if (id > max) {
+                    max = id;
+                }
+            }
+            newId = max + 1;
+            var product = [{
+                id: newId,
+                name: name,
+                pay: pay
+            }];
+
+            Array.prototype.push.apply(products, product);
+            return products;
+        },
+           person: function (newPerson) {
+               Array.prototype.push.apply(persons.data, newPerson);
+               return persons.data;
+        }
+    },
+    buy: function (username, id, total) {
+        for (var b in personals) {
+            if (personals[b]["username"] == username) {
+                var order = [{
+                    userid: b,
+                    id: id,
+                    total: total
+                }];
+                Array.prototype.push.apply(orders, order);
+            }
+        }
+        return orders;
+    },
+    outbuy: function (username, productId) {//orders["userid"],products["id"]
+        for (var b in personals) {
+            if (personals[b]["username"] == username) {
+                for (var o in orders) {
+                    if (orders[o]["userid"] == b) {
+                        if (productId==orders[o]["id"]) {
+                            delete orders[o];
+                        }
+                    }
+                }
+            }
+        }
+        return orders;
+    },
+    orderUpdate: function (id, find, newProduct) {
+        for (var o in products) {
+            if (products(o)==id) {
+
+            }
+
+        }
     }
 }
-
 persons.data = personals;
-persons.add(newer);
+
+
 persons.create("gender", "kadın");
 persons.update("cigdem", "gender", "unknown");
+persons.orderUpdate("1", "pay", "65");
 persons.create("level", "beginner", "dudu");
 persons.creators("cigdem", [{ level: "starter" }, { child: "1" }, { card: "driver license" }]);
-
+persons.add.product("notebook", "35");
+persons.add.person(newer);
+persons.buy("dudu", 9, 4);//dudu, 9 idli üründen 5 adet satın aldı. EKLE
+persons.outbuy("dudu", 9);
 //var output = persons.update("dudu", "age", 30); //persons.data[0]["age"] = 30;
 //if (output) { alert("güncelleme başarılı"); } else { alert("hata! güncellenemedi!"); }
 //persons.remove("cigdem");
